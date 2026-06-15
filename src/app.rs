@@ -164,16 +164,18 @@ pub fn App() -> Html {
     html! {
         <div class="container">
             <header class="app-header">
-                <h1>{ "Mainichi Eigo Diary" }</h1>
-                <p class="app-subtitle">{ "Write your English diary — every day a little better." }</p>
-
-                { import_export_controls }
-                { proofread_panel }
+                <div class="app-header__titles">
+                    <h1>{ "Mainichi Eigo Diary" }</h1>
+                    <p class="app-subtitle">{ "Write your English diary — every day a little better." }</p>
+                </div>
+                <div class="app-toolbar">
+                    { import_export_controls }
+                </div>
             </header>
 
             <main class="app-main">
-                <section class="editor-section">
-                    <h2>{ editor_label }</h2>
+                <section class="editor-section card">
+                    <h2 class="section-title">{ editor_label }</h2>
                     <Editor
                         key={*editor_key}
                         on_save={on_save}
@@ -181,8 +183,12 @@ pub fn App() -> Html {
                     />
                 </section>
 
+                <section class="proofread-section">
+                    { proofread_panel }
+                </section>
+
                 <section class="entries-section">
-                    <h2>{ "Past entries" }</h2>
+                    <h2 class="section-title">{ "Past entries" }</h2>
                     <EntryList
                         entries={entries.entries.clone()}
                         on_select={on_select}

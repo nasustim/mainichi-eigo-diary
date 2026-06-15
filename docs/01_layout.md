@@ -34,7 +34,11 @@ host target; DOM / WebGPU / WebLLM code is kept behind thin `wasm32`-only wrappe
 ## Build entry points
 - `src/index.html` — Trunk target (`Trunk.toml` sets `target = "src/index.html"`).
   `rel="rust"` → `../Cargo.toml`; `rel="css"` → `styles.css`.
-- `src/styles.css` — minimal styling.
+- `src/styles.css` — the frontend styles. Built on CSS custom-property design tokens
+  (`:root` color / spacing / radius / shadow / typography scales) with reusable `.card`
+  and `.btn-*` classes; light theme, responsive. The diary body and result text use a
+  serif face for a "diary" feel. `app.rs` renders a header (title + import/export toolbar),
+  an editor card, the proofread panel section, and the past-entries list.
 
 See the repo root `CLAUDE.md` for the hard rules (exact dependency pinning, Makefile-driven
 tasks, TDD). Local per-task notes live in `.nasustim-documents/` (git-ignored).
