@@ -1,8 +1,10 @@
 mod app;
 mod components;
 mod model;
+mod proofread;
 mod storage;
 mod util;
+mod web_llm;
 
 fn main() {
     yew::Renderer::<app::App>::new().render();
