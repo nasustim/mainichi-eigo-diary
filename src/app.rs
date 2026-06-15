@@ -9,6 +9,8 @@ use crate::{
 
 #[cfg(target_arch = "wasm32")]
 use crate::portability::ImportExport;
+#[cfg(target_arch = "wasm32")]
+use crate::proofread::ProofreadPanel;
 
 /// Root application component.
 ///
@@ -128,10 +130,10 @@ pub fn App() -> Html {
     };
 
     // === feature slots: import/export controls (#5) and proofread panel (#4) mount here ===
-    // Feature #5 (import/export): build the Html fragment outside html! so that
-    // #[cfg] works correctly (cfg attributes inside html! macro expressions are
-    // not supported by the Yew macro parser).
-    // Feature #4 (proofreading): define a similar fragment here and embed it below.
+    // Both fragments are built outside the html! macro so that #[cfg] attributes apply to
+    // plain Rust expressions (the Yew macro parser does not support cfg inside html!).
+
+    // Feature #5 (import/export): on_import dispatches EntriesAction::ReplaceAll.
     #[cfg(target_arch = "wasm32")]
     let import_export_controls = {
         let on_import = {
@@ -150,6 +152,15 @@ pub fn App() -> Html {
     #[cfg(not(target_arch = "wasm32"))]
     let import_export_controls: Html = html! {};
 
+    // Feature #4 (proofreading): pass the current editor draft / selected entry body.
+    #[cfg(target_arch = "wasm32")]
+    let proofread_panel = {
+        let proofread_text = (*prefill_body).clone();
+        html! { <ProofreadPanel text={proofread_text} /> }
+    };
+    #[cfg(not(target_arch = "wasm32"))]
+    let proofread_panel: Html = html! {};
+
     html! {
         <div class="container">
             <header class="app-header">
@@ -157,6 +168,7 @@ pub fn App() -> Html {
                 <p class="app-subtitle">{ "Write your English diary — every day a little better." }</p>
 
                 { import_export_controls }
+                { proofread_panel }
             </header>
 
             <main class="app-main">

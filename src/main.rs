@@ -2,8 +2,10 @@ mod app;
 mod components;
 mod model;
 mod portability;
+mod proofread;
 mod storage;
 mod util;
+mod web_llm;
 
 fn main() {
     yew::Renderer::<app::App>::new().render();
