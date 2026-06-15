@@ -44,7 +44,8 @@ When adding any dependency, look up its current exact version (`gh api`, crates.
 
 ## Layout
 - `src/main.rs` — app entry point and root `App` component.
-- `index.html` — Trunk entry (`<link data-trunk rel="rust" />`).
+- `src/index.html` — Trunk entry; its `rel="rust"` link points at `../Cargo.toml`
+  (`Trunk.toml` sets `target = "src/index.html"`).
 - `Trunk.toml` — build config. `.nasustim-documents/` — per-task TODO/plan notes.
 
 ## Notes for contributors

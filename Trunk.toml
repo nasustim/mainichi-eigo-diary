@@ -1,3 +1,3 @@
 [build]
-target = "index.html"
+target = "src/index.html"
 dist = "dist"
