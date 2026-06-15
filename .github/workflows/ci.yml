@@ -18,10 +18,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6.0.3
 
-      - name: Install Rust toolchain
-        # Honors rust-toolchain.toml (channel 1.96.0 + rustfmt/clippy + wasm32 target).
-        # dtolnay/rust-toolchain has no semver release, so pin the exact commit (tag v1).
-        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # v1
+      # rustup is preinstalled on the runner and auto-installs the pinned toolchain
+      # (channel 1.96.0 + rustfmt/clippy + wasm32 target) from rust-toolchain.toml.
+      - name: Show Rust toolchain
+        run: rustup show
 
       - name: Check (fmt + lint + test)
         run: make check
