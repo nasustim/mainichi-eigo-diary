@@ -35,7 +35,7 @@ jobs:
 
       - name: Build
         # Site is served from a project subpath on GitHub Pages.
-        run: trunk build --release --public-url /mainichi-eigo-diary/
+        run: make build PUBLIC_URL=/mainichi-eigo-diary/
 
       - name: Configure Pages
         uses: actions/configure-pages@v6.0.0

@@ -36,12 +36,23 @@ How to pin each kind:
 
 When adding any dependency, look up its current exact version (`gh api`, crates.io) and pin it.
 
-## Common commands
-- `make dev` (= `trunk serve --open`) — run the dev server with hot reload.
-- `make build` (= `trunk build --release`) — produce the production bundle in `dist/`.
-- `make clean` (= `trunk clean` + `cargo clean`) — remove build artifacts.
-- `cargo test` — run native unit tests (the host-runnable, non-DOM logic).
-- `cargo fmt` / `cargo clippy --all-targets -- -D warnings` — format and lint (TDD + lint required before done).
+## Tasks — MUST run through the Makefile
+**This is a hard rule. Agents must comply.** Every repeatable task (build, dev, test,
+format, lint, clean, CI steps) runs through a `Makefile` target — do not invoke the raw
+`trunk`/`cargo` commands directly, and keep CI (`.github/workflows/`) calling `make`
+targets too. When you add a new task, add a `Makefile` target for it instead of
+documenting a bare command.
+
+- `make dev` — dev server with hot reload (opens the browser).
+- `make build` — production bundle into `dist/`. Override the served path with
+  `make build PUBLIC_URL=/mainichi-eigo-diary/` (CI uses this for the Pages subpath).
+- `make test` — native unit tests (host-runnable, non-DOM logic).
+- `make fmt` / `make fmt-check` — format / verify formatting.
+- `make lint` — Clippy with warnings as errors.
+- `make check` — full pre-commit/CI suite (`fmt-check` + `lint` + `test`).
+- `make clean` — remove `dist/` and `target/`.
+
+TDD + lint are required before a task is considered done: run `make check`.
 
 ## Layout
 - `src/main.rs` — app entry point and root `App` component.
