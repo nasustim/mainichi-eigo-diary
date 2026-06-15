@@ -37,8 +37,9 @@ How to pin each kind:
 When adding any dependency, look up its current exact version (`gh api`, crates.io) and pin it.
 
 ## Common commands
-- `trunk serve --open` — run the dev server with hot reload.
-- `trunk build --release` — produce the production bundle in `dist/`.
+- `make dev` (= `trunk serve --open`) — run the dev server with hot reload.
+- `make build` (= `trunk build --release`) — produce the production bundle in `dist/`.
+- `make clean` (= `trunk clean` + `cargo clean`) — remove build artifacts.
 - `cargo test` — run native unit tests (the host-runnable, non-DOM logic).
 - `cargo fmt` / `cargo clippy --all-targets -- -D warnings` — format and lint (TDD + lint required before done).
 
