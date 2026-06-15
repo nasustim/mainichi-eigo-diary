@@ -1,0 +1,57 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run
+# in-progress and latest queued. Do not cancel in-progress runs.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.3
+
+      # rustup is preinstalled on the runner and auto-installs the pinned toolchain
+      # (channel 1.96.0 + wasm32-unknown-unknown target) from rust-toolchain.toml.
+      - name: Show Rust toolchain
+        run: rustup show
+
+      - name: Install Trunk
+        uses: taiki-e/install-action@v2.81.10
+        with:
+          tool: trunk@0.21.14
+
+      - name: Build
+        # Site is served from a project subpath on GitHub Pages.
+        run: make build PUBLIC_URL=/mainichi-eigo-diary/
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v6.0.0
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5.0.0

@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+# Cancel superseded runs for the same PR.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.3
+
+      # rustup is preinstalled on the runner and auto-installs the pinned toolchain
+      # (channel 1.96.0 + rustfmt/clippy + wasm32 target) from rust-toolchain.toml.
+      - name: Show Rust toolchain
+        run: rustup show
+
+      - name: Check (fmt + lint + test)
+        run: make check

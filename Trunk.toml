@@ -1,0 +1,3 @@
+[build]
+target = "src/index.html"
+dist = "dist"
