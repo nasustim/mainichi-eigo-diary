@@ -17,12 +17,24 @@ Roadmap issues are tracked on GitHub. Architype: issue #2. Check `gh issue list`
 - Hosting: **GitHub Pages** via `.github/workflows/deploy.yml` (builds with
   `--public-url /mainichi-eigo-diary/` since the site serves from a project subpath).
 
-## Versioning policy
-Pin toolchain and library versions wherever possible for reproducible builds; let
-**Renovate** propose upgrades. Specifics:
-- Rust toolchain pinned in `rust-toolchain.toml` (channel + `wasm32-unknown-unknown` target).
-- Crates pinned with exact `=` requirements in `Cargo.toml`; `Cargo.lock` is committed.
-- Trunk version pinned in the deploy workflow; GitHub Actions pinned by tag.
+## Versioning policy — MUST pin every dependency to an exact version
+**This is a hard rule. Agents must comply.** Every dependency — Rust crates AND GitHub
+Actions — is pinned to a single exact version. No ranges (`^`, `~`, `*`), no floating
+major tags (`@v4`), no branch refs (`@master`, `@stable`). **Renovate** proposes upgrades;
+do not loosen a pin to "fix" a build.
+
+How to pin each kind:
+- **Rust toolchain** — exact `channel` in `rust-toolchain.toml` (plus the
+  `wasm32-unknown-unknown` target).
+- **Rust crates** — exact `=x.y.z` requirement in `Cargo.toml` (e.g. `yew = "=0.23.0"`);
+  `Cargo.lock` is committed.
+- **GitHub Actions** — exact release tag `@vX.Y.Z` (e.g. `actions/checkout@v6.0.3`). If an
+  action publishes no semver release (e.g. `dtolnay/rust-toolchain`, which only tags `v1`),
+  pin to the full commit **SHA** with a trailing `# <tag>` comment instead.
+- **Tools installed in CI** — exact version (e.g. `taiki-e/install-action` with
+  `tool: trunk@0.21.14`).
+
+When adding any dependency, look up its current exact version (`gh api`, crates.io) and pin it.
 
 ## Common commands
 - `trunk serve --open` — run the dev server with hot reload.
