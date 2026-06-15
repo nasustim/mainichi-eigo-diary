@@ -5,3 +5,16 @@ edition = "2021"
 
 [dependencies]
 yew = { version = "=0.23.0", features = ["csr"] }
+serde = { version = "=1.0.228", features = ["derive"] }
+serde_json = "=1.0.150"
+gloo-storage = "=0.3.0"
+js-sys = "=0.3.102"
+wasm-bindgen = "=0.2.125"
+web-sys = { version = "=0.3.102", features = [
+    "Document",
+    "Event",
+    "EventTarget",
+    "HtmlInputElement",
+    "HtmlTextAreaElement",
+    "Window",
+] }
