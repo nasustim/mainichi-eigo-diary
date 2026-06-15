@@ -7,6 +7,9 @@ use crate::{
     util::{new_id, now_iso},
 };
 
+#[cfg(target_arch = "wasm32")]
+use crate::portability::ImportExport;
+
 /// Root application component.
 ///
 /// Integration seams for later features:
@@ -124,20 +127,36 @@ pub fn App() -> Html {
         "New entry"
     };
 
+    // === feature slots: import/export controls (#5) and proofread panel (#4) mount here ===
+    // Feature #5 (import/export): build the Html fragment outside html! so that
+    // #[cfg] works correctly (cfg attributes inside html! macro expressions are
+    // not supported by the Yew macro parser).
+    // Feature #4 (proofreading): define a similar fragment here and embed it below.
+    #[cfg(target_arch = "wasm32")]
+    let import_export_controls = {
+        let on_import = {
+            let entries = entries.clone();
+            Callback::from(move |imported: Vec<DiaryEntry>| {
+                entries.dispatch(EntriesAction::ReplaceAll(imported));
+            })
+        };
+        html! {
+            <ImportExport
+                entries={entries.entries.clone()}
+                on_import={on_import}
+            />
+        }
+    };
+    #[cfg(not(target_arch = "wasm32"))]
+    let import_export_controls: Html = html! {};
+
     html! {
         <div class="container">
             <header class="app-header">
                 <h1>{ "Mainichi Eigo Diary" }</h1>
                 <p class="app-subtitle">{ "Write your English diary — every day a little better." }</p>
 
-                // === feature slots: import/export controls (#5) and proofread panel (#4) mount here ===
-                // To wire in feature #5 (import/export):
-                //   - Add an `<ImportExport entries={entries.entries.clone()} on_import={...} />`
-                //     component here; its on_import callback should dispatch EntriesAction::ReplaceAll.
-                // To wire in feature #4 (proofreading):
-                //   - Add a `<ProofreadPanel body={...} />` component here or in the editor section.
-                //   - The `entries` UseReducerHandle and its `.dispatch` method are available in
-                //     this scope; clone them before moving into callbacks as shown above.
+                { import_export_controls }
             </header>
 
             <main class="app-main">
