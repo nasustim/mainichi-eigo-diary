@@ -18,23 +18,10 @@ Roadmap issues are tracked on GitHub. Architype: issue #2. Check `gh issue list`
   `--public-url /mainichi-eigo-diary/` since the site serves from a project subpath).
 
 ## Versioning policy — MUST pin every dependency to an exact version
-**This is a hard rule. Agents must comply.** Every dependency — Rust crates AND GitHub
-Actions — is pinned to a single exact version. No ranges (`^`, `~`, `*`), no floating
-major tags (`@v4`), no branch refs (`@master`, `@stable`). **Renovate** proposes upgrades;
-do not loosen a pin to "fix" a build.
-
-How to pin each kind:
-- **Rust toolchain** — exact `channel` in `rust-toolchain.toml` (plus the
-  `wasm32-unknown-unknown` target).
-- **Rust crates** — exact `=x.y.z` requirement in `Cargo.toml` (e.g. `yew = "=0.23.0"`);
-  `Cargo.lock` is committed.
-- **GitHub Actions** — exact release tag `@vX.Y.Z` (e.g. `actions/checkout@v6.0.3`). If an
-  action publishes no semver release (e.g. `dtolnay/rust-toolchain`, which only tags `v1`),
-  pin to the full commit **SHA** with a trailing `# <tag>` comment instead.
-- **Tools installed in CI** — exact version (e.g. `taiki-e/install-action` with
-  `tool: trunk@0.21.14`).
-
-When adding any dependency, look up its current exact version (`gh api`, crates.io) and pin it.
+**This is a hard rule. Agents must comply.** Every dependency (Rust crates, GitHub Actions,
+CI tools, JS CDN imports) is pinned to a single exact version — no ranges, no floating major
+tags, no branch refs. Renovate proposes upgrades; do not loosen a pin to "fix" a build.
+Full how-to-pin recipe: [`docs/03_versioning_policy.md`](docs/03_versioning_policy.md).
 
 ## Tasks — MUST run through the Makefile
 **This is a hard rule. Agents must comply.** Every repeatable task (build, dev, test,
@@ -55,12 +42,13 @@ documenting a bare command.
 TDD + lint are required before a task is considered done: run `make check`.
 
 ## Layout
-- `src/main.rs` — app entry point and root `App` component.
-- `src/index.html` — Trunk entry; its `rel="rust"` link points at `../Cargo.toml`
-  (`Trunk.toml` sets `target = "src/index.html"`).
-- `Trunk.toml` — build config. `.nasustim-documents/` — per-task TODO/plan notes.
+`src/main.rs` (entry), `src/index.html` (Trunk target; `rel="rust"` → `../Cargo.toml`,
+`rel="css"` → `styles.css`), `Trunk.toml` (build config), `.nasustim-documents/` (local
+per-task notes). Full module map: [`docs/01_layout.md`](docs/01_layout.md). The in-browser
+proofreading subsystem: [`docs/02_proofread_system.md`](docs/02_proofread_system.md).
 
 ## Notes for contributors
 - GitHub Pages must be set to **Source: GitHub Actions** in repo Settings (one-time, manual).
-- Tests run on the host target; keep browser/DOM-dependent tests out of `cargo test` (add
-  `wasm-bindgen-test` later if real-DOM testing is needed).
+- Tests run on the host target; keep DOM/WebGPU/WebLLM code behind thin `wasm32`-only
+  wrappers and unit-test only pure helpers (add `wasm-bindgen-test` later for real-DOM tests).
+- **Proofreading needs a WebGPU browser** — see [`docs/02_proofread_system.md`](docs/02_proofread_system.md).
