@@ -55,12 +55,27 @@ documenting a bare command.
 TDD + lint are required before a task is considered done: run `make check`.
 
 ## Layout
-- `src/main.rs` — app entry point and root `App` component.
-- `src/index.html` — Trunk entry; its `rel="rust"` link points at `../Cargo.toml`
+- `src/main.rs` — entry point: `mod` declarations + `yew::Renderer::<app::App>`.
+- `src/app.rs` — root `App` component; owns diary state via `use_reducer`, wires the
+  editor, entry list, import/export controls, and the proofread panel.
+- `src/model.rs` — `DiaryEntry` + `EntriesState`/`EntriesAction` reducer (pure, host-tested).
+- `src/storage.rs` — `localStorage` persistence; pure `serialize`/`deserialize` are tested.
+- `src/util.rs` — wasm-only `now_iso()` / `new_id()` (via `js_sys::Date`).
+- `src/components/` — `editor.rs`, `entry_list.rs`.
+- `src/portability.rs` (#5) — JSON import/export (`Blob` download + `FileReader` upload);
+  `to_json`/`from_json` are pure and tested.
+- `src/proofread.rs` + `src/web_llm.rs` + `src/web_llm.js` (#4) — in-browser LLM
+  proofreading. The Rust layer owns the system prompt (`build_system_prompt`); `web_llm.js`
+  is a wasm-bindgen snippet importing `@mlc-ai/web-llm@0.2.84` from the esm.run CDN.
+- `src/index.html` — Trunk entry; `rel="rust"` → `../Cargo.toml`, `rel="css"` → `styles.css`
   (`Trunk.toml` sets `target = "src/index.html"`).
 - `Trunk.toml` — build config. `.nasustim-documents/` — per-task TODO/plan notes.
 
 ## Notes for contributors
 - GitHub Pages must be set to **Source: GitHub Actions** in repo Settings (one-time, manual).
 - Tests run on the host target; keep browser/DOM-dependent tests out of `cargo test` (add
-  `wasm-bindgen-test` later if real-DOM testing is needed).
+  `wasm-bindgen-test` later if real-DOM testing is needed). DOM/WebGPU/WebLLM code is kept
+  behind thin wasm32-only wrappers; only pure helpers are unit-tested.
+- **Proofreading needs a WebGPU browser** (Chrome/Edge 113+); the default model
+  `SmolLM2-360M-Instruct-q4f16_1-MLC` also needs `shader-f16`. The panel degrades gracefully
+  with a message when WebGPU is unavailable. The model downloads in-browser on first use.
