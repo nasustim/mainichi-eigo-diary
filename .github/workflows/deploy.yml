@@ -29,7 +29,7 @@ jobs:
         run: rustup show
 
       - name: Install Trunk
-        uses: taiki-e/install-action@v2.81.10
+        uses: taiki-e/install-action@v2.86.5
         with:
           tool: trunk@0.21.14
 
