@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.1.0
+        uses: actions/checkout@v7.0.1
 
       # rustup is preinstalled on the runner and auto-installs the pinned toolchain
       # (channel 1.96.0 + rustfmt/clippy + wasm32 target) from rust-toolchain.toml.
